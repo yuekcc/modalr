@@ -1,0 +1,37 @@
+{
+  "name": "modalr",
+  "description": "一个模态层",
+  "author": {
+    "name": "yuekcc",
+    "email": "yuekcc@qq.com"
+  },
+  "version": "0.0.1",
+  "svelte": "src/index.html",
+  "module": "modalr.mjs",
+  "main": "modalr.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "rollup": "^0.65.2",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-commonjs": "^9.1.6",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-svelte": "^4.1.0",
+    "rollup-plugin-terser": "^2.0.2",
+    "svelte": "^2.13.3",
+    "svelte-transitions": "^1.2.0"
+  },
+  "keywords": [
+    "svelte",
+    "modal",
+    "dialog"
+  ],
+  "files": [
+    "src",
+    "index.mjs",
+    "index.js"
+  ]
+}

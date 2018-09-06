@@ -1,0 +1,29 @@
+<style>
+  .loading {
+    text-align: center;
+    width: 100%;
+  }
+
+  .loading img {
+    width: 3rem;
+    height: 3rem;;
+  }
+</style>
+
+<div class="loading">
+  <img src="{image}" alt="加载中">
+</div>
+
+<script>
+  // 素材源自：https://loading.io/
+
+  import {LoadingImage} from "./shared/loading-image.js";
+
+  export default {
+    data() {
+      return {
+        image: LoadingImage
+      }
+    }
+  }
+</script>

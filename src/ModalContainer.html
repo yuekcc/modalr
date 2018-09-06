@@ -1,0 +1,96 @@
+<style>
+    .modal-container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .flex-container {
+        display: flex;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .flex-item {
+        flex: 1;
+    }
+</style>
+
+<div class="modal-container flex-container" on:click="close()"
+     style="z-index: {zindex}; background-color: {backgroundColor};">
+    {#if isLoading}
+        <div class="flex-item">
+            <Loading></Loading>
+        </div>
+    {:else}
+        <div class="flex-item" transition:fly='{y:20}'>
+            {@html content}
+        </div>
+    {/if}
+</div>
+
+<script>
+    import {fly} from 'svelte-transitions';
+
+    import Loading from './Loading.html';
+
+    const zindexMgr = () => {
+        let index = 10000;
+        return () => {
+            index += 94;
+            return index
+        }
+    }
+
+    const nextIndex = zindexMgr();
+
+
+    export default {
+        data() {
+            return {
+                content: 'xx',
+                config: {
+                    closeOnMark: true,
+                    isLoading: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                    zindex: 10000,
+                }
+            }
+        },
+
+        oncreate() {
+            const config = this.get().config
+            config.zindex = nextIndex()
+
+            this.set({config})
+        },
+
+        components: {
+            Loading
+        },
+
+        transitions: {fly},
+
+        computed: {
+            zindex: ({config}) => config.zindex,
+            isLoading: ({config}) => config.isLoading,
+            backgroundColor: ({config}) => config.backgroundColor || 'rgba(0, 0, 0, 0.25)'
+        },
+
+        methods: {
+            close() {
+                const {config} = this.get();
+
+                if (config.closeOnMark) {
+                    this.destroy();
+                }
+            }
+        }
+    }
+
+</script>

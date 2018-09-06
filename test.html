@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset='utf8'>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Title</title>
+</head>
+
+<style>
+    .modal-body {
+        margin: 5rem;
+        background-color: white;
+    }
+</style>
+<body>
+
+<button onclick="showDialog()">show</button>
+<button onclick="showLoading()">loading</button>
+
+<script src="dist/modalr.js"></script>
+
+<script>
+    function getDialogBuilder() {
+        let index = 0
+        return () => {
+            index += 1
+            const id = index;
+            return `
+<div class="modal-body">
+    <h1>dialog-${id}</h1>
+    <button onclick="say('${id}')">say()</button>
+    <button onclick="showDialog()">新弹出层</button>
+    <button onclick="closeLatest()">关闭</button>
+</div>`
+        }
+    }
+
+    function say(layerNo) {
+        alert(`hi from modalr layer No.${layerNo}`)
+    }
+
+    const createDialog = getDialogBuilder();
+
+    function showDialog() {
+        const dialog = createDialog()
+        const id = modalr.show(dialog)
+        console.log(id)
+    }
+
+    function closeLatest() {
+        modalr.closeLatest()
+    }
+
+    function showLoading() {
+        let loading = modalr.loading(2000)
+    }
+</script>
+</body>
+</html>
