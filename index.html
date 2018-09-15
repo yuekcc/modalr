@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset='utf8'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Modalr Demo</title>
+</head>
+
+<style>
+  *,
+  input,
+  button {
+    box-sizing: border-box;
+  }
+
+  body {
+    padding: 3rem;
+  }
+
+  button {
+    padding: 0.5rem;
+    line-height: 1.2;
+    min-width: 5rem;
+  }
+
+  .modal-body {
+    padding: 2rem;
+    margin: 2rem;
+    background-color: white;
+  }
+</style>
+
+<body>
+  <h1>Modalr，一个模态层</h1>
+
+  <button onclick="showDialog()">显示对话框</button>
+  <button onclick="showLoading()">显示加载中</button>
+  <button onclick="testOnCloseCallback()">关闭后回调</button>
+
+  <script src="dist/modalr.js"></script>
+
+  <script>
+    var dialogs = [];
+
+    function getDialogBuilder() {
+      let index = 0
+      return () => {
+        const id = index;
+        index += 1
+        return `
+<div class="modal-body">
+    <h1>dialog-${id}</h1>
+    <button onclick="say('${id}')">SAY()</button>
+    <button onclick="showDialog()">新弹出层</button>
+    <button onclick="closeDialog(${id})">关闭</button>
+</div>`
+      }
+    }
+
+    function say(layerNo) {
+      alert(`hi from modalr layer No.${layerNo}`)
+    }
+
+    const createDialog = getDialogBuilder();
+
+    function showDialog() {
+      const dialog = createDialog()
+      const id = modalr.show(dialog)
+      dialogs.push(id)
+    }
+
+    function closeDialog(index) {
+      const handle = dialogs[index]
+
+      if (handle) {
+        modalr.close(handle)
+      }
+    }
+
+    function showLoading() {
+      let loading = modalr.loading(2000)
+    }
+
+    function testOnCloseCallback() {
+      const dialog = `<div class="modal-body">
+        <h1>点击遮挡层触发事件</h1>
+      </div>`
+
+      modalr.show(dialog, {
+        onCloseCallback: () => { alert('closed') }
+      })
+    }
+  </script>
+</body>
+
+</html>

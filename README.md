@@ -18,7 +18,7 @@ opts = {
 
 htmlObj = document.getElementById('some-id').innerHtml
 
-id = modalr.show(htmlObj, opts) // 弹出层，内容为普通 HTML 节点
+id = modalr.show(htmlObj, opts) // 弹出层，内容为普通 HTML 文本
 
 id = modalr.loading(); // 弹出“加载中”，需要手动关闭
 
@@ -31,6 +31,8 @@ modalr.closeAll() // 关闭所有
 
 ## 构建
 
+以下在 `node.js` v10 版本下测试。
+
 ```shell
 $ npm install -g rollup
 $ npm install
@@ -40,7 +42,7 @@ $ npm run dev # 开发环境
 
 ## 用例
 
-见 [test.html](test.html)。
+见 [index.html](index.html)。
 
 
 ## 更新记录
