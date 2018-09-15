@@ -18,7 +18,8 @@ export default {
   plugins: [
     svelte({
       cascade: false,
-      store: true
+      store: true,
+      dev: !prod,
     }),
     resolve(),
     commonjs(),

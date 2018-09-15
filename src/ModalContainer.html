@@ -1,96 +1,98 @@
 <style>
-    .modal-container {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        height: 100vh;
-        width: 100%;
-        overflow: hidden;
-    }
+  .modalr-dialog-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
 
-    .flex-container {
-        display: flex;
-        justify-items: center;
-        align-items: center;
-    }
+  .modalr-flex-container {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+  }
 
-    .flex-item {
-        flex: 1;
-    }
+  .modalr-flex-container .flex-item {
+    flex: 1;
+  }
 </style>
 
-<div class="modal-container flex-container" on:click="close()"
-     style="z-index: {zindex}; background-color: {backgroundColor};">
-    {#if isLoading}
-        <div class="flex-item">
-            <Loading></Loading>
-        </div>
-    {:else}
-        <div class="flex-item" transition:fly='{y:20}'>
-            {@html content}
-        </div>
-    {/if}
+<div data-modalr-id="{id}" class="modalr-dialog-container modalr-flex-container" on:click="fire('modal-container-onclose', {event, currentId: id})"
+  style="z-index: {containerZindex}; background-color: {backgroundColor};">
+  {#if isLoading}
+  <div class="flex-item" style="z-index: {childZindex}">
+    <Loading></Loading>
+  </div>
+  {:else}
+  <div class="flex-item" transition:fly='{y:20}' style="z-index: {childZindex}">
+    {@html content}
+  </div>
+  {/if}
 </div>
 
 <script>
-    import {fly} from 'svelte-transitions';
+  import { fly } from 'svelte-transitions';
 
-    import Loading from './Loading.html';
+  import Loading from './Loading.html';
 
-    const zindexMgr = () => {
-        let index = 10000;
-        return () => {
-            index += 94;
-            return index
-        }
+  const zindexMgr = () => {
+    let index = 1000;
+    return () => {
+      index += 100;
+      return index
     }
+  }
 
-    const nextIndex = zindexMgr();
+  const nextIndex = zindexMgr();
 
-
-    export default {
-        data() {
-            return {
-                content: 'xx',
-                config: {
-                    closeOnMark: true,
-                    isLoading: false,
-                    backgroundColor: 'rgba(0, 0, 0, 0.25)',
-                    zindex: 10000,
-                }
-            }
-        },
-
-        oncreate() {
-            const config = this.get().config
-            config.zindex = nextIndex()
-
-            this.set({config})
-        },
-
-        components: {
-            Loading
-        },
-
-        transitions: {fly},
-
-        computed: {
-            zindex: ({config}) => config.zindex,
-            isLoading: ({config}) => config.isLoading,
-            backgroundColor: ({config}) => config.backgroundColor || 'rgba(0, 0, 0, 0.25)'
-        },
-
-        methods: {
-            close() {
-                const {config} = this.get();
-
-                if (config.closeOnMark) {
-                    this.destroy();
-                }
-            }
+  export default {
+    data() {
+      return {
+        id: '',
+        content: 'xx',
+        config: {
+          closeOnMark: true,
+          isLoading: false,
+          backgroundColor: 'rgba(0, 0, 0, 0.25)',
+          zindex: 10000,
         }
+      }
+    },
+
+    oncreate() {
+      const x = this;
+      const { config, id } = x.get()
+      config.zindex = nextIndex()
+
+      x.set({ config });
+
+      x.on('modal-container-onclose', ({ event, currentId }) => {
+        if (event.target.dataset["modalrId"] != id) {
+          return
+        }
+
+        if (config.closeOnMark && (currentId == id)) {
+          x.destroy()
+        }
+      })
+    },
+
+    components: {
+      Loading
+    },
+
+    transitions: { fly },
+
+    computed: {
+      containerZindex: ({ config }) => config.zindex,
+      childZindex: ({ config }) => config.zindex + 10,
+      isLoading: ({ config }) => config.isLoading,
+      backgroundColor: ({ config }) => config.backgroundColor || 'rgba(0, 0, 0, 0.25)'
     }
+  }
 
 </script>

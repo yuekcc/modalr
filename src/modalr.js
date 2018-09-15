@@ -1,17 +1,20 @@
 import ModalContainer from "./ModalContainer.html";
 
-const defaultOptions = {
-  closeOnMark: true,
-  isLoading: false,
-  backgroundColor: "rgba(0, 0, 0, 0.25)",
-  onCloseCallback: function() {}
+const defaultOptions = () => {
+  return {
+    closeOnMark: true,
+    isLoading: false,
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
+    onCloseCallback: function () { }
+  }
 };
 
 const getDialogIdBuilder = () => {
   let index = 0;
   return () => {
     index += 1;
-    return `$modalr_layer_${index}`;
+    const ts = new Date()
+    return `$modalr_layer_${index}_${ts.getTime()}`;
   };
 };
 
@@ -28,12 +31,15 @@ export default {
    * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void}} opts 选项
    */
   show(content, opts) {
-    const opt = Object.assign(defaultOptions, opts);
+    const opt = Object.assign(defaultOptions(), opts);
     const { closeOnMark, onCloseCallback } = opt;
+
+    const id = nextDialogId();
 
     const handle = new ModalContainer({
       target,
       data: {
+        id,
         content,
         config: {
           closeOnMark
@@ -42,7 +48,7 @@ export default {
     });
 
     handle.on("destroy", onCloseCallback);
-    const id = nextDialogId();
+
     dialogs[id] = handle;
 
     return id;
@@ -81,7 +87,7 @@ export default {
    */
   loading(timeout) {
     const x = this;
-    const { onCloseCallback } = defaultOptions;
+    const { onCloseCallback } = defaultOptions();
 
     const handle = new ModalContainer({
       target,
