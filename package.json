@@ -1,11 +1,12 @@
 {
   "name": "modalr",
   "description": "一个模态层",
+  "license": "MIT",
   "author": {
     "name": "yuekcc",
     "email": "yuekcc@qq.com"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "svelte": "src/index.html",
   "module": "modalr.mjs",
   "main": "modalr.js",

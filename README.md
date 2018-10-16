@@ -56,6 +56,11 @@ $ npm run dev # 开发环境
   - [x] 可以正确处理多模态层时关闭事件，现在可以逐层关闭。
   - [x] 更新示例。
 
+- 2018.10.16
+  - [x] 更新构建脚本。
+  - [x] javascript 转换器改为 babel。
+
+
 ## 协议
 
 [MIT LICENSE](LICENSE)
