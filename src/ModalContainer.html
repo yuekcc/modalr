@@ -28,7 +28,7 @@
     <Loading></Loading>
   </div>
   {:else}
-  <div class="flex-item" transition:fly='{y:20}' style="z-index: {childZindex}">
+  <div id='{contentWrapperId}' class="flex-item" transition:fly='{y:20}' style="z-index: {childZindex}">
     {@html content}
   </div>
   {/if}
@@ -39,37 +39,34 @@
 
   import Loading from './Loading.html';
 
-  const zindexMgr = () => {
-    let index = 1000;
-    return () => {
-      index += 100;
-      return index
-    }
-  }
-
-  const nextIndex = zindexMgr();
+  import { nextIndex } from './indexmgr'
 
   export default {
     data() {
       return {
         id: '',
-        content: 'xx',
+        content: null,
         config: {
           closeOnMark: true,
           isLoading: false,
           backgroundColor: 'rgba(0, 0, 0, 0.25)',
-          zindex: 10000,
+          zindex: 10000
         }
       }
     },
 
     oncreate() {
       const x = this;
-      const { config, id } = x.get()
+
+      const { content, config, id } = x.get()
+
+      // 更新 index
       config.zindex = nextIndex()
 
+      // 设置状态，会同时更新所有 computed 属性
       x.set({ config });
 
+      // 增加事件，处理多弹出层的关闭问题
       x.on('modal-container-onclose', ({ event, currentId }) => {
         if (event.target.dataset["modalrId"] != id) {
           return
@@ -91,7 +88,8 @@
       containerZindex: ({ config }) => config.zindex,
       childZindex: ({ config }) => config.zindex + 10,
       isLoading: ({ config }) => config.isLoading,
-      backgroundColor: ({ config }) => config.backgroundColor || 'rgba(0, 0, 0, 0.25)'
+      backgroundColor: ({ config }) => config.backgroundColor || 'rgba(0, 0, 0, 0.25)',
+      contentWrapperId: ({ id }) => `${id}-content-wrapper}`
     }
   }
 

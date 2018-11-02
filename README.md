@@ -11,14 +11,20 @@
 ## API
 ```javascript
 opts = {
-    closeOnMark: true, // 允许点击
-    target: document.body, // 挂载点，默认是 document.body.
-    onCloseCallback: function() {} // 关闭弹出层时回调函数
+    closeOnMark: true, // 允许点击空白处关闭弹出层
+    target: document.body, // 弹出层挂载点，默认是 document.body.
+    onCloseCallback: function() {}， // 弹出层关闭时回调钩子
+    before: function(){} // 弹出前钩子
 }
 
-htmlObj = document.getElementById('some-id').innerHtml
+htmlString = document.getElementById('some-id').innerHtml
 
-id = modalr.show(htmlObj, opts) // 弹出层，内容为普通 HTML 文本
+// 弹出层，内容为普通 HTML String，ID 为 modalr 的 handler ，动态生成。
+// 注意因为弹出层显示的内容是 Html String，如果业务上需要获取内容里某个值（例如表单的值），
+// 需要使用 document.getElementByClass 方式。弹出层是复制了 HTML 中内容，非引用方式。
+// 如果使用 jQuery，通过 `${id}-content-wrapper` 可以构造出弹出层的内容的 wrapper id。
+// 通过  $('wrapper-id > .some-class')，可以快速定位出需要的 HTML Element。
+id = modalr.show(htmlString, opts)
 
 id = modalr.loading(); // 弹出“加载中”，需要手动关闭
 
@@ -34,7 +40,6 @@ modalr.closeAll() // 关闭所有
 以下在 `node.js` v10 版本下测试。
 
 ```shell
-$ npm install -g rollup
 $ npm install
 $ npm run build # 打包生产环境版本
 $ npm run dev # 开发环境
@@ -54,6 +59,11 @@ $ npm run dev # 开发环境
 - 2018.09.15
   - [x] 调用模态层 ID 号生成方法，减少重复的可能。
   - [x] 可以正确处理多模态层时关闭事件，现在可以逐层关闭。
+  - [x] 更新示例。
+
+- 2018.11.02
+  - [x] 增加 before 钩子。
+  - [x] 增加弹出层内容外层 ID，格式：${id}-content-wrapper。
   - [x] 更新示例。
 
 ## 协议

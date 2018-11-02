@@ -1,11 +1,14 @@
 import ModalContainer from "./ModalContainer.html";
 
+const noop = function () { }
+
 const defaultOptions = () => {
   return {
     closeOnMark: true,
     isLoading: false,
     backgroundColor: "rgba(0, 0, 0, 0.25)",
-    onCloseCallback: function () { }
+    onCloseCallback: noop,
+    before: noop
   }
 };
 
@@ -32,9 +35,13 @@ export default {
    */
   show(content, opts) {
     const opt = Object.assign(defaultOptions(), opts);
-    const { closeOnMark, onCloseCallback } = opt;
+    const { closeOnMark, onCloseCallback, before } = opt;
 
     const id = nextDialogId();
+
+    if (opt.before) {
+      opt.before()
+    }
 
     const handle = new ModalContainer({
       target,
@@ -95,7 +102,7 @@ export default {
         config: {
           closeOnMark: false,
           isLoading: true,
-          backgroundColor: "rgba(0, 0, 0, 0.05)"
+          backgroundColor: "rgba(0, 0, 0, 0.05)",
         }
       }
     });
