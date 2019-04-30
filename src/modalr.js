@@ -78,6 +78,9 @@ export default {
     }
   },
 
+  /**
+   * 关闭最后一个弹出层
+   */
   closeLatest() {
     const lastId = dialogIds.pop();
     this.close(lastId);
