@@ -11,14 +11,8 @@ const prod = !process.env.ROLLUP_WATCH;
 const baseRollupConfig = {
     input: "src/modalr.js",
     plugins: [
-        svelte({
-            generate: 'dom',
-            format: 'es',
-            css: true,
-            store: true,
-            dev: !prod,
-        }),
-        resolve({ jsnext: true, main: true, browser: true }),
+        svelte(),
+        resolve(),
         commonjs()
     ]
 }

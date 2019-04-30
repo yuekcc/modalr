@@ -1,6 +1,6 @@
-import ModalContainer from "./ModalContainer.html";
+import ModalContainer from "./ModalContainer.svelte";
 
-const noop = function () { }
+const noop = function() {};
 
 const defaultOptions = () => {
   return {
@@ -9,23 +9,27 @@ const defaultOptions = () => {
     backgroundColor: "rgba(0, 0, 0, 0.25)",
     onCloseCallback: noop,
     before: noop
-  }
+  };
 };
+
+let dialogs = {};
+let dialogIds = [];
 
 const getDialogIdBuilder = () => {
   let index = 0;
   return () => {
     index += 1;
-    const ts = new Date()
-    return `$modalr_layer_${index}_${ts.getTime()}`;
+    const ts = new Date();
+    const dialogId = `$modalr_layer_${index}_${ts.getTime()}`;
+
+    dialogIds.push(dialogId);
+    return dialogId;
   };
 };
 
 const nextDialogId = getDialogIdBuilder();
 
 const target = document.body;
-
-let dialogs = {};
 
 export default {
   /**
@@ -34,18 +38,18 @@ export default {
    * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void}} opts 选项
    */
   show(content, opts) {
-    const opt = Object.assign(defaultOptions(), opts);
+    const opt = { ...defaultOptions(), ...opts };
     const { closeOnMark, onCloseCallback, before } = opt;
 
     const id = nextDialogId();
 
     if (opt.before) {
-      opt.before()
+      opt.before();
     }
 
     const handle = new ModalContainer({
       target,
-      data: {
+      props: {
         id,
         content,
         config: {
@@ -54,7 +58,7 @@ export default {
       }
     });
 
-    handle.on("destroy", onCloseCallback);
+    handle.$on("destroy", onCloseCallback);
 
     dialogs[id] = handle;
 
@@ -68,10 +72,15 @@ export default {
   close(id) {
     const handle = dialogs[id];
 
-    if (handle && handle.destroy) {
-      handle.destroy();
+    if (handle && handle.$destroy) {
+      handle.$destroy();
       dialogs[id] = null;
     }
+  },
+
+  closeLatest() {
+    const lastId = dialogIds.pop();
+    this.close(lastId);
   },
 
   /**
@@ -81,8 +90,8 @@ export default {
     Object.keys(dialogs).map(handleId => {
       const handle = dialogs[handleId];
 
-      if (handle && handle.destroy) {
-        handle.destroy();
+      if (handle && handle.$destroy) {
+        handle.$destroy();
         dialogs[handleId] = null;
       }
     });
@@ -98,16 +107,16 @@ export default {
 
     const handle = new ModalContainer({
       target,
-      data: {
+      props: {
         config: {
           closeOnMark: false,
           isLoading: true,
-          backgroundColor: "rgba(0, 0, 0, 0.05)",
+          backgroundColor: "rgba(0, 0, 0, 0.05)"
         }
       }
     });
 
-    handle.on("destroy", onCloseCallback);
+    handle.$on("destroy", onCloseCallback);
 
     const id = nextDialogId();
     dialogs[id] = handle;

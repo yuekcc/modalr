@@ -5,7 +5,7 @@
 - 提供一个模态容器。
 - 使用绝对定位、flexbox 实现容器内的 html 可以水平、垂直居中。
 - 支持多弹出模态层。
-- 基于 [svelte 框架](https://svelte.technology/)、[rollup 工具](https://rollupjs.org/)。
+- 基于 [svelte](https://svelte.dev/)、[rollup 工具](https://rollupjs.org/)。
 - [IIFE](https://developer.mozilla.org/en-US/docs/Glossary/IIFE) 方式打包，支持 jQuery 协同使用。
 
 ## API
@@ -51,6 +51,12 @@ $ npm run dev # 开发环境
 
 
 ## 更新记录
+
+- 2019.4.30
+  - rollup 升级到 rollup 1.10.1。
+  - svelte 升级到 3.1.0。
+  - 按 svelte 3 重写相应的组件。
+  - 增加 modalr.closeLatest() 方法，关闭最后一个弹窗。
 
 - 2018.09.06
   - [x] 可以弹出模态层。z-index 按 10000 起计算。
