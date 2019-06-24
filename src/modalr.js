@@ -35,16 +35,17 @@ export default {
   /**
    * 弹出
    * @param {HTMLElement} content 内容
-   * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void}} opts 选项
+   * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void, before: () => void}} opts 选项
+   * @returns {string} 弹出层 ID
    */
   show(content, opts) {
     const opt = { ...defaultOptions(), ...opts };
-    const { closeOnMark, onCloseCallback, before } = opt;
+    const { closeOnMark, onCloseCallback, before: beforeHook } = opt;
 
     const id = nextDialogId();
 
-    if (opt.before) {
-      opt.before();
+    if (beforeHook && typeof beforeHook === "function") {
+      beforeHook();
     }
 
     const handle = new ModalContainer({
@@ -103,6 +104,7 @@ export default {
   /**
    * 显示“加载中”
    * @param {number} timeout 自动关闭延时，单位：ms
+   * @returns {string} 弹出层 ID
    */
   loading(timeout) {
     const x = this;
