@@ -14,10 +14,16 @@
 
 ```javascript
 opts = {
-    closeOnMark: true, // 允许点击空白处关闭弹出层
-    target: document.body, // 弹出层挂载点，默认是 document.body.
-    onCloseCallback: function() {}， // 弹出层关闭时回调钩子
-    before: function(){} // 弹出前钩子
+  // 允许点击空白处关闭弹出层
+  closeOnMark: true,
+
+  // 弹出层挂载点，默认是 document.body.
+  target: document.body,
+
+  // 弹出层关闭时回调钩子
+  onCloseCallback: function() {},  
+  // 弹出前钩子
+  before: function(){} 
 }
 
 htmlString = document.getElementById('some-id').innerHtml
@@ -27,16 +33,16 @@ htmlString = document.getElementById('some-id').innerHtml
 // 需要使用 document.getElementByClass 方式。弹出层是复制了 HTML 中内容，非引用方式。
 // 如果使用 jQuery，通过 `${id}-content-wrapper` 可以构造出弹出层的内容的 wrapper id。
 // 通过  $('wrapper-id > .some-class')，可以快速定位出需要的 HTML Element。
-id = modalr.show(htmlString, opts)
+const id1 = modalr.show(htmlString, opts)
 
 // 弹出“加载中”，需要手动关闭
-id = modalr.loading();
+const id2 = modalr.loading();
 
 // 弹出“加载中”，1000ms 后自动关闭
-id = modalr.loading(1000);
+const id3 = modalr.loading(1000);
 
 // 关闭指定层
-modalr.close(id);
+modalr.close(id1);
 
 // 关闭所有
 modalr.closeAll();
@@ -61,6 +67,11 @@ $ npm run dev # 开发环境
 见 [demo.html](demo.html)。
 
 ## 更新记录
+
+- 2019.6.24
+
+  - 升级依赖
+  - 开放 before 钩子
 
 - 2019.4.30
 
