@@ -1,4 +1,4 @@
-import ModalContainer from "./ModalContainer.svelte";
+import ModalContainer from "./components/modal-container";
 
 const noop = function() {};
 
@@ -15,7 +15,7 @@ const defaultOptions = () => {
 let dialogs = {};
 let dialogIds = [];
 
-const getDialogIdBuilder = () => {
+const makeDialogIdBuilder = () => {
   let index = 0;
   return () => {
     index += 1;
@@ -27,7 +27,7 @@ const getDialogIdBuilder = () => {
   };
 };
 
-const nextDialogId = getDialogIdBuilder();
+const nextDialogId = makeDialogIdBuilder();
 
 const target = document.body;
 

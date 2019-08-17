@@ -77,11 +77,11 @@ function createEventDispatcher() {
 }
 
 const dirty_components = [];
-const resolved_promise = Promise.resolve();
-let update_scheduled = false;
 const binding_callbacks = [];
 const render_callbacks = [];
 const flush_callbacks = [];
+const resolved_promise = Promise.resolve();
+let update_scheduled = false;
 function schedule_update() {
     if (!update_scheduled) {
         update_scheduled = true;
@@ -102,18 +102,19 @@ function flush() {
             update(component.$$);
         }
         while (binding_callbacks.length)
-            binding_callbacks.shift()();
+            binding_callbacks.pop()();
         // then, once components are updated, call
         // afterUpdate functions. This may cause
         // subsequent updates...
-        while (render_callbacks.length) {
-            const callback = render_callbacks.pop();
+        for (let i = 0; i < render_callbacks.length; i += 1) {
+            const callback = render_callbacks[i];
             if (!seen_callbacks.has(callback)) {
                 callback();
                 // ...so guard against infinite loops
                 seen_callbacks.add(callback);
             }
         }
+        render_callbacks.length = 0;
     } while (dirty_components.length);
     while (flush_callbacks.length) {
         flush_callbacks.pop()();
@@ -123,24 +124,26 @@ function flush() {
 function update($$) {
     if ($$.fragment) {
         $$.update($$.dirty);
-        run_all($$.before_render);
+        run_all($$.before_update);
         $$.fragment.p($$.dirty, $$.ctx);
         $$.dirty = null;
-        $$.after_render.forEach(add_render_callback);
+        $$.after_update.forEach(add_render_callback);
     }
 }
 const outroing = new Set();
 let outros;
 function group_outros() {
     outros = {
-        remaining: 0,
-        callbacks: []
+        r: 0,
+        c: [],
+        p: outros // parent group
     };
 }
 function check_outros() {
-    if (!outros.remaining) {
-        run_all(outros.callbacks);
+    if (!outros.r) {
+        run_all(outros.c);
     }
+    outros = outros.p;
 }
 function transition_in(block, local) {
     if (block && block.i) {
@@ -148,15 +151,16 @@ function transition_in(block, local) {
         block.i(local);
     }
 }
-function transition_out(block, local, callback) {
+function transition_out(block, local, detach, callback) {
     if (block && block.o) {
         if (outroing.has(block))
             return;
         outroing.add(block);
-        outros.callbacks.push(() => {
+        outros.c.push(() => {
             outroing.delete(block);
             if (callback) {
-                block.d(1);
+                if (detach)
+                    block.d(1);
                 callback();
             }
         });
@@ -164,11 +168,9 @@ function transition_out(block, local, callback) {
     }
 }
 function mount_component(component, target, anchor) {
-    const { fragment, on_mount, on_destroy, after_render } = component.$$;
+    const { fragment, on_mount, on_destroy, after_update } = component.$$;
     fragment.m(target, anchor);
-    // onMount happens after the initial afterUpdate. Because
-    // afterUpdate callbacks happen in reverse order (inner first)
-    // we schedule onMount callbacks before afterUpdate callbacks
+    // onMount happens before the initial afterUpdate
     add_render_callback(() => {
         const new_on_destroy = on_mount.map(run).filter(is_function);
         if (on_destroy) {
@@ -181,13 +183,12 @@ function mount_component(component, target, anchor) {
         }
         component.$$.on_mount = [];
     });
-    after_render.forEach(add_render_callback);
+    after_update.forEach(add_render_callback);
 }
 function destroy_component(component, detaching) {
     if (component.$$.fragment) {
         run_all(component.$$.on_destroy);
-        if (detaching)
-            component.$$.fragment.d(1);
+        component.$$.fragment.d(detaching);
         // TODO null out other refs, including component.$$ (but need to
         // preserve final state?)
         component.$$.on_destroy = component.$$.fragment = null;
@@ -202,7 +203,7 @@ function make_dirty(component, key) {
     }
     component.$$.dirty[key] = true;
 }
-function init(component, options, instance, create_fragment, not_equal$$1, prop_names) {
+function init(component, options, instance, create_fragment, not_equal, prop_names) {
     const parent_component = current_component;
     set_current_component(component);
     const props = options.props || {};
@@ -212,13 +213,13 @@ function init(component, options, instance, create_fragment, not_equal$$1, prop_
         // state
         props: prop_names,
         update: noop,
-        not_equal: not_equal$$1,
+        not_equal,
         bound: blank_object(),
         // lifecycle
         on_mount: [],
         on_destroy: [],
-        before_render: [],
-        after_render: [],
+        before_update: [],
+        after_update: [],
         context: new Map(parent_component ? parent_component.$$.context : []),
         // everything else
         callbacks: blank_object(),
@@ -227,7 +228,7 @@ function init(component, options, instance, create_fragment, not_equal$$1, prop_
     let ready = false;
     $$.ctx = instance
         ? instance(component, props, (key, value) => {
-            if ($$.ctx && not_equal$$1($$.ctx[key], $$.ctx[key] = value)) {
+            if ($$.ctx && not_equal($$.ctx[key], $$.ctx[key] = value)) {
                 if ($$.bound[key])
                     $$.bound[key](value);
                 if (ready)
@@ -237,7 +238,7 @@ function init(component, options, instance, create_fragment, not_equal$$1, prop_
         : props;
     $$.update();
     ready = true;
-    run_all($$.before_render);
+    run_all($$.before_update);
     $$.fragment = create_fragment($$.ctx);
     if (options.target) {
         if (options.hydrate) {
@@ -274,7 +275,7 @@ class SvelteComponent {
     }
 }
 
-/* src\Loading.svelte generated by Svelte v3.5.4 */
+/* src\components\loading\loading.svelte generated by Svelte v3.8.1 */
 
 function add_css() {
 	var style = element("style");
@@ -327,17 +328,17 @@ class Loading extends SvelteComponent {
 	}
 }
 
-const createZIndexManager = () => {
+const makeZindexManager = () => {
   let index = 1000;
   return () => {
     index += 100;
-    return index;
-  };
+    return index
+  }
 };
 
-const nextIndex = createZIndexManager();
+const nextZindex = makeZindexManager();
 
-/* src\ModalContainer.svelte generated by Svelte v3.5.4 */
+/* src\components\modal-container\modal-container.svelte generated by Svelte v3.8.1 */
 
 function add_css$1() {
 	var style = element("style");
@@ -346,7 +347,7 @@ function add_css$1() {
 	append(document.head, style);
 }
 
-// (72:2) {:else}
+// (75:2) {:else}
 function create_else_block(ctx) {
 	var div;
 
@@ -388,7 +389,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (68:2) {#if isLoading}
+// (71:2) {#if isLoading}
 function create_if_block(ctx) {
 	var div, current;
 
@@ -431,7 +432,7 @@ function create_if_block(ctx) {
 				detach(div);
 			}
 
-			destroy_component(loading, );
+			destroy_component(loading);
 		}
 	};
 }
@@ -458,7 +459,7 @@ function create_fragment$1(ctx) {
 		c() {
 			div = element("div");
 			if_block.c();
-			div.dataset.modalrId = ctx.id;
+			attr(div, "data-modalr-id", ctx.id);
 			attr(div, "class", "modalr-dialog-container modalr-flex-container svelte-1nsld77");
 			set_style(div, "z-index", ctx.continerZIndex);
 			set_style(div, "background-color", ctx.backgroundColor);
@@ -478,7 +479,7 @@ function create_fragment$1(ctx) {
 				if_blocks[current_block_type_index].p(changed, ctx);
 			} else {
 				group_outros();
-				transition_out(if_blocks[previous_block_index], 1, () => {
+				transition_out(if_blocks[previous_block_index], 1, 1, () => {
 					if_blocks[previous_block_index] = null;
 				});
 				check_outros();
@@ -493,7 +494,7 @@ function create_fragment$1(ctx) {
 			}
 
 			if (!current || changed.id) {
-				div.dataset.modalrId = ctx.id;
+				attr(div, "data-modalr-id", ctx.id);
 			}
 
 			if (!current || changed.continerZIndex) {
@@ -530,31 +531,31 @@ function create_fragment$1(ctx) {
 function instance$1($$self, $$props, $$invalidate) {
 	
 
-    const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
-    let { id = "", content = null, config = {
-      closeOnMark: true,
-      isLoading: false,
-      backgroundColor: "rgba(0, 0, 0, 0.25)",
-      zindex: 10000
-    } } = $$props;
+  let { id = "", content = null, config = {
+    closeOnMark: true,
+    isLoading: false,
+    backgroundColor: "rgba(0, 0, 0, 0.25)",
+    zindex: 10000
+  } } = $$props;
 
-    const handleModalContainerOnClose = ({ event, currentId }) => {
-      if (event.target.dataset["modalrId"] != id) {
-        return;
-      }
+  const handleModalContainerOnClose = ({ event, currentId }) => {
+    if (event.target.dataset["modalrId"] != id) {
+      return;
+    }
 
-      if (config.closeOnMark && currentId == id) {
-        dispatch("destroy");
-      }
-    };
+    if (config.closeOnMark && currentId == id) {
+      dispatch("destroy");
+    }
+  };
 
-    const handleModalContainerOnClick = event =>
-      handleModalContainerOnClose({ event, currentId: id });
+  const handleModalContainerOnClick = event =>
+    handleModalContainerOnClose({ event, currentId: id });
 
-    onMount(() => {
-      config.zindex = nextIndex(); $$invalidate('config', config);
-    });
+  onMount(() => {
+    config.zindex = nextZindex(); $$invalidate('config', config);
+  });
 
 	$$self.$set = $$props => {
 		if ('id' in $$props) $$invalidate('id', id = $$props.id);
@@ -585,7 +586,7 @@ function instance$1($$self, $$props, $$invalidate) {
 	};
 }
 
-class ModalContainer extends SvelteComponent {
+class Modal_container extends SvelteComponent {
 	constructor(options) {
 		super();
 		if (!document.getElementById("svelte-1nsld77-style")) add_css$1();
@@ -608,7 +609,7 @@ const defaultOptions = () => {
 let dialogs = {};
 let dialogIds = [];
 
-const getDialogIdBuilder = () => {
+const makeDialogIdBuilder = () => {
   let index = 0;
   return () => {
     index += 1;
@@ -620,7 +621,7 @@ const getDialogIdBuilder = () => {
   };
 };
 
-const nextDialogId = getDialogIdBuilder();
+const nextDialogId = makeDialogIdBuilder();
 
 const target = document.body;
 
@@ -641,7 +642,7 @@ var modalr = {
       beforeHook();
     }
 
-    const handle = new ModalContainer({
+    const handle = new Modal_container({
       target,
       props: {
         id,
@@ -703,7 +704,7 @@ var modalr = {
     const x = this;
     const { onCloseCallback } = defaultOptions();
 
-    const handle = new ModalContainer({
+    const handle = new Modal_container({
       target,
       props: {
         config: {
