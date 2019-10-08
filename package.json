@@ -14,16 +14,16 @@
     "prepublishOnly": "node build.js"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "rollup": "^1.19.4",
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
+    "rollup": "^1.23.1",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-node-resolve": "^4.2.4",
     "rollup-plugin-svelte": "^5.1.0",
     "rollup-plugin-terser": "^4.0.4",
-    "svelte": "^3.8.1"
+    "svelte": "^3.12.1"
   },
   "keywords": [
     "svelte"
