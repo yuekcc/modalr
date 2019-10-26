@@ -18,14 +18,14 @@ const baseRollupConfig = {
 }
 
 const esmBundleOutputConfig = { file: "dist/modalr.esm.js", format: "es" }
-const iifeBundleOutputConfig = { file: "dist/modalr.js", format: "iife", name: objName }
+const umdBundleOutputConfig = { file: "dist/modalr.js", format: "umd", name: objName }
 
-const buildStep1 = async () => {
+const createEsm = async () => {
     const bundle = await rollup.rollup(baseRollupConfig)
     await bundle.write(esmBundleOutputConfig)
 }
 
-const buildStep2 = async () => {
+const createUmdFromEsm = async () => {
     const bundle = await rollup.rollup({
         input: "dist/modalr.esm.js",
         plugins: [
@@ -34,26 +34,26 @@ const buildStep2 = async () => {
         ]
     })
 
-    await bundle.write(iifeBundleOutputConfig)
+    await bundle.write(umdBundleOutputConfig)
 }
 
-const build = async () => {
-    await buildStep1()
+const productionBuild = async () => {
+    await createEsm()
 
     if (prod) {
-        await buildStep2()
+        await createUmdFromEsm()
     }
 }
 
-const dev = async () => {
+const developmentBuild = async () => {
   console.log('building')
   const bundle = await rollup.rollup(baseRollupConfig)
-  await bundle.write(iifeBundleOutputConfig)
+  await bundle.write(umdBundleOutputConfig)
 }
 
 module.exports = {
-    build,
-    dev
+    productionBuild,
+    developmentBuild
 }
 
 

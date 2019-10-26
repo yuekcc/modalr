@@ -1,0 +1,1 @@
+require("./buildconfig").developmentBuild();
