@@ -6,9 +6,9 @@
 - 使用绝对定位、flexbox 实现容器内的 html 可以水平、垂直居中。
 - 支持多弹出模态层。
 - 基于 [svelte](https://svelte.dev/)、[rollup 工具](https://rollupjs.org/)。
-- [IIFE][1] 方式打包，支持 jQuery 协同使用。
+- [umd][1] 方式打包，可以和 jQuery 协同使用。
 
-[1]: https://developer.mozilla.org/en-US/docs/Glossary/IIFE
+[1]: https://github.com/umdjs/umd
 
 ## API
 
