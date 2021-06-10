@@ -1,7 +1,7 @@
 {
   "name": "modalr",
   "description": "一个模态层",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "author": {
     "name": "yuekcc",
     "email": "yuekcc@qq.com"
@@ -9,25 +9,19 @@
   "main": "dist/modalr.js",
   "module": "dist/modalr.esm.js",
   "scripts": {
-    "dev": "node scripts/dev.js",
     "build": "node scripts/build.js",
-    "prepublishOnly": "node scripts/build.js",
     "dev-server": "sirv --dev --port=1234"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/preset-env": "^7.6.3",
-    "rollup": "^1.25.2",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-commonjs": "^9.3.4",
-    "rollup-plugin-node-resolve": "^4.2.4",
-    "rollup-plugin-svelte": "^5.1.0",
-    "rollup-plugin-terser": "^4.0.4",
-    "sirv-cli": "^0.4.5",
-    "svelte": "^3.12.1"
+    "esbuild": "~0.12.0",
+    "esbuild-svelte": "~0.5.0",
+    "sirv-cli": "^1.0.12",
+    "svelte": "^3.38.2"
   },
   "keywords": [
-    "svelte"
+    "svelte",
+    "component",
+    "modal",
+    "dialog"
   ]
 }

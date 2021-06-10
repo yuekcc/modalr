@@ -1,6 +1,6 @@
-import ModalContainer from "./components/modal-container";
+import { ModalContainer } from "./components/modal-container";
 
-const noop = function() {};
+const noop = function () { };
 
 const defaultOptions = () => {
   return {
@@ -39,6 +39,7 @@ export default {
    * @returns {string} 弹出层 ID
    */
   show(content, opts) {
+    const clonedContent = content && content.cloneNode ? content.cloneNode(true) : content;
     const opt = { ...defaultOptions(), ...opts };
     const { closeOnMark, onCloseCallback, before: beforeHook } = opt;
 
@@ -52,7 +53,7 @@ export default {
       target,
       props: {
         id,
-        content,
+        content: clonedContent,
         config: {
           closeOnMark
         }

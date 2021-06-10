@@ -1,7 +1,7 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
 
-  import Loading from "../loading";
+  import { Loading } from "../loading";
 
   import { nextZindex } from "../../utils/zindex-manager";
 

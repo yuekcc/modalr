@@ -5,10 +5,11 @@
 - 提供一个模态容器。
 - 使用绝对定位、flexbox 实现容器内的 html 可以水平、垂直居中。
 - 支持多弹出模态层。
-- 基于 [svelte](https://svelte.dev/)、[rollup 工具](https://rollupjs.org/)。
-- [umd][1] 方式打包，可以和 jQuery 协同使用。
+- 基于 [svelte](https://svelte.dev/)、[esbuild 工具](https://esbuild.github.io/)。
+- [iife][1] 方式打包，默认挂载到 `window.modalr`，可以和 jQuery 协同使用。
+- **不支持 IE 系列浏览器，也不会计划支持 IE 系列浏览器**。
 
-[1]: https://github.com/umdjs/umd
+[1]: https://developer.mozilla.org/zh-CN/docs/Glossary/IIFE
 
 ## API
 
@@ -54,7 +55,7 @@ modalr.closeLatest();
 
 ## 构建
 
-以下在 `node.js` v10 版本下测试。
+以下在 `node.js` v16 版本下测试通过。
 
 ```shell
 $ npm install
@@ -67,6 +68,12 @@ $ npm run dev # 开发环境
 见 [demo.html](demo.html)。
 
 ## 更新记录
+
+- 2021.06.10
+  - 升级依赖
+  - 构建工具改为 esbuild，极速构建
+  - 传入的 DOM 节点会尝试调用 `el.cloneNode(true)` 复制一份用于弹窗
+  - 因为 esbuild 的限制，不再输出 umd 格式，改为 iife 格式。默认挂载到 `window.modalr`
 
 - 2019.10.26
   - 升级依赖
