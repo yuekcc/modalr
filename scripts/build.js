@@ -3,8 +3,8 @@ const sveltePlugin = require('esbuild-svelte');
 
 const outputs = [
   { format: 'esm', input: 'src/modalr.js', outfile: 'dist/modalr.esm.js' },
-  { format: 'iife', input: 'src/iife-wrapper.js', outfile: 'dist/modalr.js' },
-]
+  { format: 'iife', input: 'src/iife-wrapper.js', outfile: 'dist/modalr.js' }
+];
 
 outputs.forEach(config => {
   esbuild.build({
@@ -16,10 +16,8 @@ outputs.forEach(config => {
     target: 'chrome63',
     sourcemap: true,
     plugins: [sveltePlugin({
-      compileOptions: { css: true },
+      compileOptions: { css: true }
     })],
-    logLevel: 'info',
-  }).catch(() => process.exit(1))
-})
-
-
+    logLevel: 'info'
+  }).catch(() => process.exit(1));
+});
