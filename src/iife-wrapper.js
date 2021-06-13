@@ -1,2 +1,2 @@
-import modalr from './modalr'
-window.modalr = modalr
+import modalr from './modalr';
+window.modalr = modalr;

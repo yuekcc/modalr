@@ -3,7 +3,7 @@
 
   import { Loading } from "../loading";
 
-  import { nextZindex } from "../../utils/zindex-manager";
+  import { nextZIndex } from "../../utils/zindex-manager";
 
   const dispatch = createEventDispatcher();
 
@@ -13,7 +13,7 @@
     closeOnMark: true,
     isLoading: false,
     backgroundColor: "rgba(0, 0, 0, 0.25)",
-    zindex: 10000
+    zindex: 10000,
   };
 
   const handleModalContainerOnClose = ({ event, currentId }) => {
@@ -26,7 +26,7 @@
     }
   };
 
-  const handleModalContainerOnClick = event =>
+  const handleModalContainerOnClick = (event) =>
     handleModalContainerOnClose({ event, currentId: id });
 
   $: continerZIndex = config.zindex;
@@ -36,9 +36,26 @@
   $: isLoading = config.isLoading;
 
   onMount(() => {
-    config.zindex = nextZindex();
+    config.zindex = nextZIndex();
   });
 </script>
+
+<div
+  data-modalr-id={id}
+  class="modalr-dialog-container modalr-flex-container"
+  on:click={handleModalContainerOnClick}
+  style="z-index: {continerZIndex}; background-color: {backgroundColor};"
+>
+  {#if isLoading}
+    <div class="flex-item" style="z-index: {clildZIndex}">
+      <Loading />
+    </div>
+  {:else}
+    <div id={contentWrapperId} class="flex-item" style="z-index: {clildZIndex}">
+      {@html content}
+    </div>
+  {/if}
+</div>
 
 <style>
   .modalr-dialog-container {
@@ -62,19 +79,3 @@
     flex: 1;
   }
 </style>
-
-<div
-  data-modalr-id={id}
-  class="modalr-dialog-container modalr-flex-container"
-  on:click={handleModalContainerOnClick}
-  style="z-index: {continerZIndex}; background-color: {backgroundColor};">
-  {#if isLoading}
-    <div class="flex-item" style="z-index: {clildZIndex}">
-      <Loading />
-    </div>
-  {:else}
-    <div id={contentWrapperId} class="flex-item" style="z-index: {clildZIndex}">
-      {@html content}
-    </div>
-  {/if}
-</div>

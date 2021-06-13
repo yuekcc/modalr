@@ -1,9 +1,9 @@
-const makeZindexManager = () => {
+const makeZIndexManager = () => {
   let index = 1000;
   return () => {
     index += 100;
-    return index
-  }
-}
+    return index;
+  };
+};
 
-export const nextZindex = makeZindexManager();
+export const nextZIndex = makeZIndexManager();

@@ -1,4 +1,4 @@
-import { ModalContainer } from "./components/modal-container";
+import { ModalContainer } from './components/modal-container';
 
 const noop = function () { };
 
@@ -6,14 +6,14 @@ const defaultOptions = () => {
   return {
     closeOnMark: true,
     isLoading: false,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
+    backgroundColor: 'rgba(0, 0, 0, 0.25)',
     onCloseCallback: noop,
     before: noop
   };
 };
 
-let dialogs = {};
-let dialogIds = [];
+const dialogs = {};
+const dialogIds = [];
 
 const makeDialogIdBuilder = () => {
   let index = 0;
@@ -38,14 +38,14 @@ export default {
    * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void, before: () => void}} opts 选项
    * @returns {string} 弹出层 ID
    */
-  show(content, opts) {
+  show (content, opts) {
     const clonedContent = content && content.cloneNode ? content.cloneNode(true) : content;
     const opt = { ...defaultOptions(), ...opts };
     const { closeOnMark, onCloseCallback, before: beforeHook } = opt;
 
     const id = nextDialogId();
 
-    if (beforeHook && typeof beforeHook === "function") {
+    if (beforeHook && typeof beforeHook === 'function') {
       beforeHook();
     }
 
@@ -60,7 +60,7 @@ export default {
       }
     });
 
-    handle.$on("destroy", onCloseCallback);
+    handle.$on('destroy', onCloseCallback);
 
     dialogs[id] = handle;
 
@@ -71,7 +71,7 @@ export default {
    * 按 handleId 关闭指定的弹出层
    * @param {*} id 弹出层 ID 号
    */
-  close(id) {
+  close (id) {
     const handle = dialogs[id];
 
     if (handle && handle.$destroy) {
@@ -83,7 +83,7 @@ export default {
   /**
    * 关闭最后一个弹出层
    */
-  closeLatest() {
+  closeLatest () {
     const lastId = dialogIds.pop();
     this.close(lastId);
   },
@@ -91,7 +91,7 @@ export default {
   /**
    * 关闭所有弹出层
    */
-  closeAll() {
+  closeAll () {
     Object.keys(dialogs).map(handleId => {
       const handle = dialogs[handleId];
 
@@ -107,7 +107,7 @@ export default {
    * @param {number} timeout 自动关闭延时，单位：ms
    * @returns {string} 弹出层 ID
    */
-  loading(timeout) {
+  loading (timeout) {
     const x = this;
     const { onCloseCallback } = defaultOptions();
 
@@ -117,12 +117,12 @@ export default {
         config: {
           closeOnMark: false,
           isLoading: true,
-          backgroundColor: "rgba(0, 0, 0, 0.05)"
+          backgroundColor: 'rgba(0, 0, 0, 0.05)'
         }
       }
     });
 
-    handle.$on("destroy", onCloseCallback);
+    handle.$on('destroy', onCloseCallback);
 
     const id = nextDialogId();
     dialogs[id] = handle;
