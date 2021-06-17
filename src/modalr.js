@@ -12,8 +12,8 @@ const defaultOptions = () => {
   };
 };
 
-const dialogs = {};
 const dialogIds = [];
+const dialogs = new Map();
 
 const makeDialogIdBuilder = () => {
   let index = 0;
@@ -21,8 +21,6 @@ const makeDialogIdBuilder = () => {
     index += 1;
     const ts = new Date();
     const dialogId = `$modalr_layer_${index}_${ts.getTime()}`;
-
-    dialogIds.push(dialogId);
     return dialogId;
   };
 };
@@ -61,8 +59,8 @@ export default {
     });
 
     handle.$on('destroy', onCloseCallback);
-
-    dialogs[id] = handle;
+    dialogIds.push(id);
+    dialogs.set(id, handle);
 
     return id;
   },
@@ -72,11 +70,21 @@ export default {
    * @param {*} id 弹出层 ID 号
    */
   close(id) {
-    const handle = dialogs[id];
+    const dialog = dialogs.get(id);
 
-    if (handle && handle.$destroy) {
-      handle.$destroy();
-      dialogs[id] = null;
+    if (!dialog) {
+      return;
+    }
+
+    if (dialog.$destroy) {
+      dialog.$destroy();
+    }
+
+    dialogs.delete(id);
+
+    const index = dialogIds.findIndex(it => it === id);
+    if (index > -1) {
+      dialogIds.splice(index, 1);
     }
   },
 
@@ -92,14 +100,7 @@ export default {
    * 关闭所有弹出层
    */
   closeAll() {
-    Object.keys(dialogs).forEach(handleId => {
-      const handle = dialogs[handleId];
-
-      if (handle && handle.$destroy) {
-        handle.$destroy();
-        dialogs[handleId] = null;
-      }
-    });
+    Array.from(dialogs.values()).forEach(handleId => this.close(handleId));
   },
 
   /**
@@ -108,10 +109,10 @@ export default {
    * @returns {string} 弹出层 ID
    */
   loading(timeout) {
-    const x = this;
+    const _timeout = timeout || 0;
     const { onCloseCallback } = defaultOptions();
 
-    const handle = new ModalContainer({
+    const dialog = new ModalContainer({
       target,
       props: {
         config: {
@@ -122,15 +123,16 @@ export default {
       },
     });
 
-    handle.$on('destroy', onCloseCallback);
+    dialog.$on('destroy', onCloseCallback);
 
     const id = nextDialogId();
-    dialogs[id] = handle;
+    dialogIds.push(id);
+    dialogs.set(id, dialog);
 
-    if (timeout) {
+    if (_timeout > -1) {
       setTimeout(() => {
-        x.close(id);
-      }, timeout);
+        this.close(id);
+      }, _timeout);
     }
 
     return id;
