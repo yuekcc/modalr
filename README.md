@@ -69,6 +69,11 @@ $ npm run dev # 开发环境
 
 ## 更新记录
 
+- 2021.06.18
+  - iife 入口改为 iife-wrapper.js；esm 模块入口改为 esm-wrapper.js
+  - 修复部分场景下不能删除 dialogId 的问题
+  - 增加 eslint 配置
+
 - 2021.06.10
   - 升级依赖
   - 构建工具改为 esbuild，极速构建
