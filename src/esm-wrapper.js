@@ -1,2 +1,2 @@
 import _Modalr from './modalr';
-window.modalr = _Modalr;
+export const Modalr = _Modalr;
