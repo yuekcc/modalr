@@ -1,6 +1,6 @@
 import { ModalContainer } from './components/modal-container';
 
-const noop = function () { };
+const noop = function () {};
 
 const defaultOptions = () => {
   return {
@@ -8,7 +8,7 @@ const defaultOptions = () => {
     isLoading: false,
     backgroundColor: 'rgba(0, 0, 0, 0.25)',
     onCloseCallback: noop,
-    before: noop
+    before: noop,
   };
 };
 
@@ -38,7 +38,7 @@ export default {
    * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void, before: () => void}} opts 选项
    * @returns {string} 弹出层 ID
    */
-  show (content, opts) {
+  show(content, opts) {
     const clonedContent = content && content.cloneNode ? content.cloneNode(true) : content;
     const opt = { ...defaultOptions(), ...opts };
     const { closeOnMark, onCloseCallback, before: beforeHook } = opt;
@@ -55,9 +55,9 @@ export default {
         id,
         content: clonedContent,
         config: {
-          closeOnMark
-        }
-      }
+          closeOnMark,
+        },
+      },
     });
 
     handle.$on('destroy', onCloseCallback);
@@ -71,7 +71,7 @@ export default {
    * 按 handleId 关闭指定的弹出层
    * @param {*} id 弹出层 ID 号
    */
-  close (id) {
+  close(id) {
     const handle = dialogs[id];
 
     if (handle && handle.$destroy) {
@@ -83,7 +83,7 @@ export default {
   /**
    * 关闭最后一个弹出层
    */
-  closeLatest () {
+  closeLatest() {
     const lastId = dialogIds.pop();
     this.close(lastId);
   },
@@ -91,8 +91,8 @@ export default {
   /**
    * 关闭所有弹出层
    */
-  closeAll () {
-    Object.keys(dialogs).map(handleId => {
+  closeAll() {
+    Object.keys(dialogs).forEach(handleId => {
       const handle = dialogs[handleId];
 
       if (handle && handle.$destroy) {
@@ -107,7 +107,7 @@ export default {
    * @param {number} timeout 自动关闭延时，单位：ms
    * @returns {string} 弹出层 ID
    */
-  loading (timeout) {
+  loading(timeout) {
     const x = this;
     const { onCloseCallback } = defaultOptions();
 
@@ -117,9 +117,9 @@ export default {
         config: {
           closeOnMark: false,
           isLoading: true,
-          backgroundColor: 'rgba(0, 0, 0, 0.05)'
-        }
-      }
+          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        },
+      },
     });
 
     handle.$on('destroy', onCloseCallback);
@@ -134,5 +134,5 @@ export default {
     }
 
     return id;
-  }
+  },
 };

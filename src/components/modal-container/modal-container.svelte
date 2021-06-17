@@ -1,43 +1,43 @@
 <script>
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onMount } from 'svelte';
 
-  import { Loading } from "../loading";
+  import { Loading } from '../loading';
 
-  import { nextZIndex } from "../../utils/zindex-manager";
+  import { nextZIndex } from '../../utils/zindex-manager';
 
   const dispatch = createEventDispatcher();
 
-  export let id = "";
+  export let id = '';
   export let content = null;
   export let config = {
     closeOnMark: true,
     isLoading: false,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
+    backgroundColor: 'rgba(0, 0, 0, 0.25)',
     zindex: 10000,
   };
 
   const handleModalContainerOnClose = ({ event, currentId }) => {
-    if (event.target.dataset["modalrId"] != id) {
+    if (event.target.dataset['modalrId'] != id) {
       return;
     }
 
     if (config.closeOnMark && currentId == id) {
-      dispatch("destroy");
+      dispatch('destroy');
     }
   };
 
-  const handleModalContainerOnClick = (event) =>
-    handleModalContainerOnClose({ event, currentId: id });
+  const handleModalContainerOnClick = (event) => handleModalContainerOnClose({ event, currentId: id });
 
   $: continerZIndex = config.zindex;
   $: clildZIndex = config.zindex + 10;
-  $: backgroundColor = config.backgroundColor || "rgba(0, 0, 0, 0.25)";
+  $: backgroundColor = config.backgroundColor || 'rgba(0, 0, 0, 0.25)';
   $: contentWrapperId = `${id}-content-wrapper}`;
   $: isLoading = config.isLoading;
 
   onMount(() => {
     config.zindex = nextZIndex();
   });
+
 </script>
 
 <div
@@ -78,4 +78,5 @@
   .modalr-flex-container .flex-item {
     flex: 1;
   }
+
 </style>
