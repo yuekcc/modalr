@@ -14,6 +14,7 @@
     .modal-body {
       margin: 5rem;
       background-color: white;
+      padding: 16px;
     }
   </style>
   <body>
@@ -24,17 +25,19 @@
 
     <script>
       function getDialogBuilder() {
-        let index = 0;
+        let id = 0;
         return () => {
-          index += 1;
-          const id = index;
-          return `
-<div class="modal-body">
+          id += 1;
+
+          const el = document.createElement('template');
+          el.innerHTML = `<div class="modal-body">
     <h1>dialog-${id}</h1>
     <button onclick="say('${id}')">say()</button>
     <button onclick="showDialog()">新弹出层</button>
     <button onclick="closeLatest()">关闭</button>
-</div>`;
+    </div>`;
+
+          return el;
         };
       }
 
@@ -46,7 +49,7 @@
 
       function showDialog() {
         const dialog = createDialog();
-        const id = modalr.show(dialog, { before: () => console.log("before") });
+        const id = modalr.show(dialog, { before: () => console.log('before') });
         console.log(id);
       }
 
