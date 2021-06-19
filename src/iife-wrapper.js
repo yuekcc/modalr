@@ -1,2 +1,2 @@
-import { dialogManager } from './modalr';
+import { dialogManager } from './dialog-manager';
 window.modalr = dialogManager;

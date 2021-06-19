@@ -9,9 +9,10 @@
   "main": "dist/modalr.js",
   "module": "dist/modalr.esm.js",
   "scripts": {
+    "types": "tsc",
     "build:iife": "node scripts/build.js -format=iife -input=src/iife-wrapper.js -outfile=dist/modalr.js",
-    "build:esm": "node scripts/build.js -format=esm -input=src/esm-wrapper.js -outfile=dist/modalr.esm.js",
-    "build": "npm run build:iife && npm run build:esm",
+    "build:esm": "node scripts/build.js -format=esm -input=src/index.js -outfile=dist/modalr.esm.js",
+    "build": "run-p build:esm build:iife types",
     "watch": "node scripts/build.js --watch -format=iife -input=src/iife-wrapper.js -outfile=dist/modalr.js",
     "dev-server": "sirv --dev --port=1234"
   },
@@ -24,8 +25,10 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "estrella": "^1.4.1",
+    "npm-run-all": "^4.1.5",
     "sirv-cli": "^1.0.12",
-    "svelte": "^3.38.2"
+    "svelte": "^3.38.2",
+    "typescript": "^4.3.4"
   },
   "keywords": [
     "svelte",

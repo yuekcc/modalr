@@ -28,25 +28,22 @@ const makeDialogIdBuilder = () => {
   };
 };
 
-const getDOM = content => (content && content.cloneNode ? content.cloneNode(true) : content);
+const getDOM = (content: HTMLElement | string) => {
+  const el = typeof content === 'string' ? document.querySelector(content) : content;
+  return el.cloneNode(true);
+};
 
 const TARGET = document.body;
 
 const nextDialogId = makeDialogIdBuilder();
 
-class DialogManager {
+export class DialogManager {
   _dialogIds = [];
-  _dialogs = new Map();
+  _dialogs = new Map<string, any>();
 
   constructor() {}
 
-  /**
-   * 弹出
-   * @param {HTMLElement} content 内容
-   * @param {{closeOnMark: boolean, backgroundColor: string, onCloseCallback: () => void, before: () => void}} opts 选项
-   * @returns {string} 弹出层 ID
-   */
-  show(content: HTMLElement, opts: Options) {
+  show(content: HTMLElement | string, opts: Options) {
     const _content = getDOM(content);
     const { closeOnMark, onCloseCallback, before: beforeHook } = { ...defaultOptions(), ...opts };
 
@@ -74,7 +71,7 @@ class DialogManager {
     return id;
   }
 
-  private _remove(dialogId: string): void {
+  private _removeDialog(dialogId: string): void {
     this._dialogs.delete(dialogId);
 
     const index = this._dialogIds.findIndex(it => it === dialogId);
@@ -94,7 +91,7 @@ class DialogManager {
       dialog.$destroy();
     }
 
-    this._remove(dialogId);
+    this._removeDialog(dialogId);
   }
 
   closeLatest(): void {
