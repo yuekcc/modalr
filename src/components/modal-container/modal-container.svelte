@@ -31,7 +31,7 @@
   $: continerZIndex = config.zindex;
   $: clildZIndex = config.zindex + 10;
   $: backgroundColor = config.backgroundColor || 'rgba(0, 0, 0, 0.25)';
-  $: contentWrapperId = `${id}-content-wrapper}`;
+  $: contentWrapperId = `${id}-content-wrapper`;
   $: isLoading = config.isLoading;
 
   onMount(() => {
