@@ -9,7 +9,10 @@
   "main": "dist/modalr.js",
   "module": "dist/modalr.esm.js",
   "scripts": {
-    "build": "node scripts/build.js",
+    "build:iife": "node scripts/build.js -format=iife -input=src/iife-wrapper.js -outfile=dist/modalr.js",
+    "build:esm": "node scripts/build.js -format=esm -input=src/esm-wrapper.js -outfile=dist/modalr.esm.js",
+    "build": "npm run build:iife && npm run build:esm",
+    "watch": "node scripts/build.js --watch -format=iife -input=src/iife-wrapper.js -outfile=dist/modalr.js",
     "dev-server": "sirv --dev --port=1234"
   },
   "devDependencies": {
@@ -20,6 +23,7 @@
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-svelte3": "^3.2.0",
+    "estrella": "^1.4.1",
     "sirv-cli": "^1.0.12",
     "svelte": "^3.38.2"
   },

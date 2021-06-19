@@ -1,27 +1,26 @@
-const esbuild = require('esbuild');
+const { build, cliopts } = require('estrella');
 const sveltePlugin = require('esbuild-svelte');
 
-const outputs = [
-  { format: 'esm', input: 'src/esm-wrapper.js', outfile: 'dist/modalr.esm.js' },
-  { format: 'iife', input: 'src/iife-wrapper.js', outfile: 'dist/modalr.js' },
-];
+const [opts] = cliopts.parse(
+  ['format', 'Setup package format', '<iife|esm>'],
+  ['outfile', 'Setup output file', '<file>'],
+  ['input', 'Setup entry file', '<file>'],
+);
+const format = opts.format;
+const outfile = opts.outfile;
+const input = opts.input;
 
-outputs.forEach(config => {
-  esbuild
-    .build({
-      format: config.format,
-      entryPoints: [config.input],
-      outfile: config.outfile,
-      bundle: true,
-      minify: true,
-      target: 'chrome63',
-      sourcemap: true,
-      plugins: [
-        sveltePlugin({
-          compileOptions: { css: true },
-        }),
-      ],
-      logLevel: 'info',
-    })
-    .catch(() => process.exit(1));
+build({
+  entry: input || 'src/index.js',
+  outfile: outfile || 'dist/index.js',
+  format: format || 'esm',
+  bundle: true,
+  minify: true,
+  target: 'chrome63',
+  sourcemap: true,
+  plugins: [
+    sveltePlugin({
+      compileOptions: { css: true },
+    }),
+  ],
 });

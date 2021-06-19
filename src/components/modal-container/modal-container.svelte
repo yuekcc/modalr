@@ -26,7 +26,7 @@
     }
   };
 
-  const handleModalContainerOnClick = (event) => handleModalContainerOnClose({ event, currentId: id });
+  const handleModalContainerOnClick = event => handleModalContainerOnClose({ event, currentId: id });
 
   $: continerZIndex = config.zindex;
   $: clildZIndex = config.zindex + 10;
