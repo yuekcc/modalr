@@ -30,7 +30,7 @@ const makeDialogIdBuilder = () => {
 
 const getDOM = (content: HTMLElement | string) => {
   const el = typeof content === 'string' ? document.querySelector(content) : content;
-  return el.cloneNode(true);
+  return el.cloneNode(true) as any as HTMLElement;
 };
 
 const TARGET = document.body;
@@ -57,7 +57,7 @@ export class DialogManager {
       target: TARGET,
       props: {
         id,
-        content: _content,
+        content: _content.innerHTML,
         config: {
           closeOnMark,
         },
