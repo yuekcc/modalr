@@ -69,6 +69,12 @@ $ npm run dev # 开发环境
 
 ## 更新记录
 
+- 2021.06.19
+  - 更新构建脚本
+  - 使用 typescript 重写入口代码
+  - 增加 types
+  - 更新 package.json 配置，完善 bundler 支持
+
 - 2021.06.18
   - iife 入口改为 iife-wrapper.js；esm 模块入口改为 esm-wrapper.js
   - 修复部分场景下不能删除 dialogId 的问题
