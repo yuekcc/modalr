@@ -15,7 +15,7 @@ build({
   outfile: outfile || 'dist/index.js',
   format: format || 'esm',
   bundle: true,
-  minify: true,
+  minify: false,
   target: 'chrome63',
   sourcemap: true,
   plugins: [
