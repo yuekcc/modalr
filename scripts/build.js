@@ -23,4 +23,7 @@ build({
       compileOptions: { css: true },
     }),
   ],
+  loader: {
+    '.svg': 'dataurl',
+  },
 });
