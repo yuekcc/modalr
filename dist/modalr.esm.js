@@ -252,7 +252,7 @@ function make_dirty(component, i) {
   }
   component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
 }
-function init(component, options, instance3, create_fragment3, not_equal, props, dirty = [-1]) {
+function init(component, options, instance2, create_fragment3, not_equal, props, dirty = [-1]) {
   const parent_component = current_component;
   set_current_component(component);
   const $$ = component.$$ = {
@@ -273,7 +273,7 @@ function init(component, options, instance3, create_fragment3, not_equal, props,
     skip_bound: false
   };
   let ready = false;
-  $$.ctx = instance3 ? instance3(component, options.props || {}, (i, ret, ...rest) => {
+  $$.ctx = instance2 ? instance2(component, options.props || {}, (i, ret, ...rest) => {
     const value = rest.length ? rest[0] : ret;
     if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
       if (!$$.skip_bound && $$.bound[i])
@@ -367,11 +367,17 @@ var SvelteComponent = class {
   }
 };
 
+// src/components/loading/loader.svg
+var loader_default = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItbG9hZGVyIj48bGluZSB4MT0iMTIiIHkxPSIyIiB4Mj0iMTIiIHkyPSI2Ij48L2xpbmU+PGxpbmUgeDE9IjEyIiB5MT0iMTgiIHgyPSIxMiIgeTI9IjIyIj48L2xpbmU+PGxpbmUgeDE9IjQuOTMiIHkxPSI0LjkzIiB4Mj0iNy43NiIgeTI9IjcuNzYiPjwvbGluZT48bGluZSB4MT0iMTYuMjQiIHkxPSIxNi4yNCIgeDI9IjE5LjA3IiB5Mj0iMTkuMDciPjwvbGluZT48bGluZSB4MT0iMiIgeTE9IjEyIiB4Mj0iNiIgeTI9IjEyIj48L2xpbmU+PGxpbmUgeDE9IjE4IiB5MT0iMTIiIHgyPSIyMiIgeTI9IjEyIj48L2xpbmU+PGxpbmUgeDE9IjQuOTMiIHkxPSIxOS4wNyIgeDI9IjcuNzYiIHkyPSIxNi4yNCI+PC9saW5lPjxsaW5lIHgxPSIxNi4yNCIgeTE9IjcuNzYiIHgyPSIxOS4wNyIgeTI9IjQuOTMiPjwvbGluZT48L3N2Zz4=";
+
+// src/components/loading/loader-image.js
+var LoaderImage = loader_default;
+
 // src/components/loading/loading.svelte
 function add_css() {
   var style = element("style");
-  style.id = "svelte-ebl6dg-style";
-  style.textContent = ".modalr-loading.svelte-ebl6dg.svelte-ebl6dg{text-align:center;width:100%}.modalr-loading.svelte-ebl6dg .modalr-loading-img.svelte-ebl6dg{width:3rem;height:3rem}";
+  style.id = "svelte-1u5xpy6-style";
+  style.textContent = "@keyframes spinner-border{to{transform:rotate(360deg)}}.modalr-loading.svelte-1u5xpy6.svelte-1u5xpy6{text-align:center;width:100%}.modalr-loading.svelte-1u5xpy6 .modalr-loader-image.svelte-1u5xpy6{width:3rem;height:3rem;animation:1s linear infinite spinner-border}";
   append(document.head, style);
 }
 function create_fragment(ctx) {
@@ -382,11 +388,11 @@ function create_fragment(ctx) {
     c() {
       div = element("div");
       img = element("img");
-      if (img.src !== (img_src_value = ctx[0]))
+      if (img.src !== (img_src_value = LoaderImage))
         attr(img, "src", img_src_value);
       attr(img, "alt", "\u52A0\u8F7D\u4E2D");
-      attr(img, "class", "modalr-loading-img svelte-ebl6dg");
-      attr(div, "class", "modalr-loading svelte-ebl6dg");
+      attr(img, "class", "modalr-loader-image svelte-1u5xpy6");
+      attr(div, "class", "modalr-loading svelte-1u5xpy6");
     },
     m(target, anchor) {
       insert(target, div, anchor);
@@ -401,16 +407,12 @@ function create_fragment(ctx) {
     }
   };
 }
-function instance($$self) {
-  const LoadingImage = `data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibGRzLWNhbWVyYSIgd2lkdGg9IjMycHgiICBoZWlnaHQ9IjMycHgiICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTAsNTApIj4KPGcgdHJhbnNmb3JtPSJzY2FsZSgwLjcpIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTUwLC01MCkiPgo8ZyB0cmFuc2Zvcm09InJvdGF0ZSgyNzAuNzIgNTAgNTApIj4KICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InJvdGF0ZSIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIHZhbHVlcz0iMzYwIDUwIDUwOzAgNTAgNTAiIGtleVRpbWVzPSIwOzEiIGR1cj0iMXMiIGtleVNwbGluZXM9IjAuNSAwLjUgMC41IDAuNSIgY2FsY01vZGU9InNwbGluZSI+PC9hbmltYXRlVHJhbnNmb3JtPgogIDxwYXRoIGZpbGw9IiNmMDUxMjUiIGQ9Ik01NC4zLDI4LjFoMzQuMmMtNC41LTkuMy0xMi40LTE2LjctMjEuOS0yMC44TDQ1LjcsMjguMUw1NC4zLDI4LjFMNTQuMywyOC4xeiI+PC9wYXRoPgogIDxwYXRoIGZpbGw9IiNmZGI4MTMiIGQ9Ik02MS43LDcuM0M1MS45LDQsNDEuMSw0LjIsMzEuNSw4LjF2MjkuNWw2LjEtNi4xTDYxLjcsNy4zQzYxLjcsNy4zLDYxLjcsNy4zLDYxLjcsNy4zeiI+PC9wYXRoPgogIDxwYXRoIGZpbGw9IiM3ZmJiNDIiIGQ9Ik0yOC4xLDExLjZjLTkuMyw0LjUtMTYuNywxMi40LTIwLjgsMjEuOWwyMC44LDIwLjh2LTguNkwyOC4xLDExLjZDMjguMSwxMS42LDI4LjEsMTEuNiwyOC4xLDExLjZ6Ij48L3BhdGg+CiAgPHBhdGggZmlsbD0iIzMyYTBkYSIgZD0iTTMxLjUsNjIuNEw3LjMsMzguM2MwLDAsMCwwLDAsMEM0LDQ4LjEsNC4yLDU4LjksOC4xLDY4LjVoMjkuNUwzMS41LDYyLjR6Ij48L3BhdGg+CiAgPHBhdGggZmlsbD0iI2YwNTEyNSIgZD0iTTQ1LjcsNzEuOUgxMS41YzAsMCwwLDAsMCwwYzQuNSw5LjMsMTIuNCwxNi43LDIxLjksMjAuOGwyMC44LTIwLjhINDUuN3oiPjwvcGF0aD4KICA8cGF0aCBmaWxsPSIjZmRiODEzIiBkPSJNNjIuNCw2OC41TDM4LjMsOTIuNmMwLDAsMCwwLDAsMGM5LjgsMy40LDIwLjYsMy4xLDMwLjItMC44VjYyLjRMNjIuNCw2OC41eiI+PC9wYXRoPgogIDxwYXRoIGZpbGw9IiM3ZmJiNDIiIGQ9Ik03MS45LDQ1Ljd2OC42djM0LjJjMCwwLDAsMCwwLDBjOS4zLTQuNSwxNi43LTEyLjQsMjAuOC0yMS45TDcxLjksNDUuN3oiPjwvcGF0aD4KICA8cGF0aCBmaWxsPSIjMzJhMGRhIiBkPSJNOTEuOSwzMS41QzkxLjksMzEuNSw5MS45LDMxLjUsOTEuOSwzMS41bC0yOS41LDBsMCwwbDYuMSw2LjFsMjQuMSwyNC4xYzAsMCwwLDAsMCwwIEM5Niw1MS45LDk1LjgsNDEuMSw5MS45LDMxLjV6Ij48L3BhdGg+CjwvZz48L2c+PC9nPjwvZz48L3N2Zz4K`;
-  return [LoadingImage];
-}
 var Loading = class extends SvelteComponent {
   constructor(options) {
     super();
-    if (!document.getElementById("svelte-ebl6dg-style"))
+    if (!document.getElementById("svelte-1u5xpy6-style"))
       add_css();
-    init(this, options, instance, create_fragment, safe_not_equal, {});
+    init(this, options, null, create_fragment, safe_not_equal, {});
   }
 };
 var loading_default = Loading;
@@ -590,7 +592,7 @@ function create_fragment2(ctx) {
     }
   };
 }
-function instance2($$self, $$props, $$invalidate) {
+function instance($$self, $$props, $$invalidate) {
   let continerZIndex;
   let clildZIndex;
   let backgroundColor;
@@ -664,7 +666,7 @@ var Modal_container = class extends SvelteComponent {
     super();
     if (!document.getElementById("svelte-fr23s2-style"))
       add_css2();
-    init(this, options, instance2, create_fragment2, safe_not_equal, {id: 0, content: 1, config: 8});
+    init(this, options, instance, create_fragment2, safe_not_equal, {id: 0, content: 1, config: 8});
   }
 };
 var modal_container_default = Modal_container;
