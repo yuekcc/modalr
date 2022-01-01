@@ -34,12 +34,48 @@
   function safe_not_equal(a, b) {
     return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
   }
+  var src_url_equal_anchor;
+  function src_url_equal(element_src, url) {
+    if (!src_url_equal_anchor) {
+      src_url_equal_anchor = document.createElement("a");
+    }
+    src_url_equal_anchor.href = url;
+    return element_src === src_url_equal_anchor.href;
+  }
   function is_empty(obj) {
     return Object.keys(obj).length === 0;
   }
   var tasks = new Set();
+  var is_hydrating = false;
+  function start_hydrating() {
+    is_hydrating = true;
+  }
+  function end_hydrating() {
+    is_hydrating = false;
+  }
   function append(target, node) {
     target.appendChild(node);
+  }
+  function append_styles(target, style_sheet_id, styles) {
+    const append_styles_to = get_root_for_style(target);
+    if (!append_styles_to.getElementById(style_sheet_id)) {
+      const style = element("style");
+      style.id = style_sheet_id;
+      style.textContent = styles;
+      append_stylesheet(append_styles_to, style);
+    }
+  }
+  function get_root_for_style(node) {
+    if (!node)
+      return document;
+    const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
+    if (root && root.host) {
+      return root;
+    }
+    return node.ownerDocument;
+  }
+  function append_stylesheet(node, style) {
+    append(node.head || node, style);
   }
   function insert(target, node, anchor) {
     target.insertBefore(node, anchor || null);
@@ -66,9 +102,9 @@
   function set_style(node, key, value, important) {
     node.style.setProperty(key, value, important ? "important" : "");
   }
-  function custom_event(type, detail) {
+  function custom_event(type, detail, bubbles = false) {
     const e = document.createEvent("CustomEvent");
-    e.initCustomEvent(type, false, false, detail);
+    e.initCustomEvent(type, bubbles, false, detail);
     return e;
   }
   var active_docs = new Set();
@@ -111,20 +147,20 @@
   function add_render_callback(fn) {
     render_callbacks.push(fn);
   }
-  var flushing = false;
   var seen_callbacks = new Set();
+  var flushidx = 0;
   function flush() {
-    if (flushing)
-      return;
-    flushing = true;
+    const saved_component = current_component;
     do {
-      for (let i = 0; i < dirty_components.length; i += 1) {
-        const component = dirty_components[i];
+      while (flushidx < dirty_components.length) {
+        const component = dirty_components[flushidx];
+        flushidx++;
         set_current_component(component);
         update(component.$$);
       }
       set_current_component(null);
       dirty_components.length = 0;
+      flushidx = 0;
       while (binding_callbacks.length)
         binding_callbacks.pop()();
       for (let i = 0; i < render_callbacks.length; i += 1) {
@@ -140,8 +176,8 @@
       flush_callbacks.pop()();
     }
     update_scheduled = false;
-    flushing = false;
     seen_callbacks.clear();
+    set_current_component(saved_component);
   }
   function update($$) {
     if ($$.fragment !== null) {
@@ -253,7 +289,7 @@
     }
     component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
   }
-  function init(component, options, instance2, create_fragment3, not_equal, props, dirty = [-1]) {
+  function init(component, options, instance2, create_fragment3, not_equal, props, append_styles2, dirty = [-1]) {
     const parent_component = current_component;
     set_current_component(component);
     const $$ = component.$$ = {
@@ -268,11 +304,13 @@
       on_disconnect: [],
       before_update: [],
       after_update: [],
-      context: new Map(parent_component ? parent_component.$$.context : options.context || []),
+      context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
       callbacks: blank_object(),
       dirty,
-      skip_bound: false
+      skip_bound: false,
+      root: options.target || parent_component.$$.root
     };
+    append_styles2 && append_styles2($$.root);
     let ready = false;
     $$.ctx = instance2 ? instance2(component, options.props || {}, (i, ret, ...rest) => {
       const value = rest.length ? rest[0] : ret;
@@ -290,6 +328,7 @@
     $$.fragment = create_fragment3 ? create_fragment3($$.ctx) : false;
     if (options.target) {
       if (options.hydrate) {
+        start_hydrating();
         const nodes = children(options.target);
         $$.fragment && $$.fragment.l(nodes);
         nodes.forEach(detach);
@@ -299,6 +338,7 @@
       if (options.intro)
         transition_in(component.$$.fragment);
       mount_component(component, options.target, options.anchor, options.customElement);
+      end_hydrating();
       flush();
     }
     set_current_component(parent_component);
@@ -375,11 +415,8 @@
   var LoaderImage = loader_default;
 
   // src/components/loading/loading.svelte
-  function add_css() {
-    var style = element("style");
-    style.id = "svelte-1u5xpy6-style";
-    style.textContent = "@keyframes spinner-border{to{transform:rotate(360deg)}}.modalr-loading.svelte-1u5xpy6.svelte-1u5xpy6{text-align:center;width:100%}.modalr-loading.svelte-1u5xpy6 .modalr-loader-image.svelte-1u5xpy6{width:3rem;height:3rem;animation:1s linear infinite spinner-border}";
-    append(document.head, style);
+  function add_css(target) {
+    append_styles(target, "svelte-1u5xpy6", "@keyframes spinner-border{to{transform:rotate(360deg)}}.modalr-loading.svelte-1u5xpy6.svelte-1u5xpy6{text-align:center;width:100%}.modalr-loading.svelte-1u5xpy6 .modalr-loader-image.svelte-1u5xpy6{width:3rem;height:3rem;animation:1s linear infinite spinner-border}");
   }
   function create_fragment(ctx) {
     let div;
@@ -389,7 +426,7 @@
       c() {
         div = element("div");
         img = element("img");
-        if (img.src !== (img_src_value = LoaderImage))
+        if (!src_url_equal(img.src, img_src_value = LoaderImage))
           attr(img, "src", img_src_value);
         attr(img, "alt", "\u52A0\u8F7D\u4E2D");
         attr(img, "class", "modalr-loader-image svelte-1u5xpy6");
@@ -411,9 +448,7 @@
   var Loading = class extends SvelteComponent {
     constructor(options) {
       super();
-      if (!document.getElementById("svelte-1u5xpy6-style"))
-        add_css();
-      init(this, options, null, create_fragment, safe_not_equal, {});
+      init(this, options, null, create_fragment, safe_not_equal, {}, add_css);
     }
   };
   var loading_default = Loading;
@@ -432,20 +467,17 @@
   var nextZIndex = makeZIndexManager();
 
   // src/components/modal-container/modal-container.svelte
-  function add_css2() {
-    var style = element("style");
-    style.id = "svelte-fr23s2-style";
-    style.textContent = ".modalr-dialog-container.svelte-fr23s2.svelte-fr23s2{position:fixed;top:0;right:0;bottom:0;left:0;height:100vh;width:100%;overflow:hidden}.modalr-flex-container.svelte-fr23s2.svelte-fr23s2{display:flex;justify-items:center;align-items:center}.modalr-flex-container.svelte-fr23s2 .flex-item.svelte-fr23s2{flex:1}";
-    append(document.head, style);
+  function add_css2(target) {
+    append_styles(target, "svelte-fr23s2", ".modalr-dialog-container.svelte-fr23s2.svelte-fr23s2{position:fixed;top:0;right:0;bottom:0;left:0;height:100vh;width:100%;overflow:hidden}.modalr-flex-container.svelte-fr23s2.svelte-fr23s2{display:flex;justify-items:center;align-items:center}.modalr-flex-container.svelte-fr23s2 .flex-item.svelte-fr23s2{flex:1}");
   }
   function create_else_block(ctx) {
     let div;
     return {
       c() {
         div = element("div");
-        attr(div, "id", ctx[5]);
+        attr(div, "id", ctx[3]);
         attr(div, "class", "flex-item svelte-fr23s2");
-        set_style(div, "z-index", ctx[3]);
+        set_style(div, "z-index", ctx[5]);
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -455,11 +487,11 @@
         if (dirty & 2)
           div.innerHTML = ctx2[1];
         ;
-        if (dirty & 32) {
-          attr(div, "id", ctx2[5]);
-        }
         if (dirty & 8) {
-          set_style(div, "z-index", ctx2[3]);
+          attr(div, "id", ctx2[3]);
+        }
+        if (dirty & 32) {
+          set_style(div, "z-index", ctx2[5]);
         }
       },
       i: noop,
@@ -480,7 +512,7 @@
         div = element("div");
         create_component(loading.$$.fragment);
         attr(div, "class", "flex-item svelte-fr23s2");
-        set_style(div, "z-index", ctx[3]);
+        set_style(div, "z-index", ctx[5]);
       },
       m(target, anchor) {
         insert(target, div, anchor);
@@ -488,8 +520,8 @@
         current = true;
       },
       p(ctx2, dirty) {
-        if (!current || dirty & 8) {
-          set_style(div, "z-index", ctx2[3]);
+        if (!current || dirty & 32) {
+          set_style(div, "z-index", ctx2[5]);
         }
       },
       i(local) {
@@ -519,7 +551,7 @@
     const if_block_creators = [create_if_block, create_else_block];
     const if_blocks = [];
     function select_block_type(ctx2, dirty) {
-      if (ctx2[6])
+      if (ctx2[2])
         return 0;
       return 1;
     }
@@ -531,7 +563,7 @@
         if_block.c();
         attr(div, "data-modalr-id", ctx[0]);
         attr(div, "class", "modalr-dialog-container modalr-flex-container svelte-fr23s2");
-        set_style(div, "z-index", ctx[2]);
+        set_style(div, "z-index", ctx[6]);
         set_style(div, "background-color", ctx[4]);
       },
       m(target, anchor) {
@@ -567,8 +599,8 @@
         if (!current || dirty & 1) {
           attr(div, "data-modalr-id", ctx2[0]);
         }
-        if (!current || dirty & 4) {
-          set_style(div, "z-index", ctx2[2]);
+        if (!current || dirty & 64) {
+          set_style(div, "z-index", ctx2[6]);
         }
         if (!current || dirty & 16) {
           set_style(div, "background-color", ctx2[4]);
@@ -631,11 +663,11 @@
     $$self.$$.update = () => {
       if ($$self.$$.dirty & 256) {
         $:
-          $$invalidate(2, continerZIndex = config.zindex);
+          $$invalidate(6, continerZIndex = config.zindex);
       }
       if ($$self.$$.dirty & 256) {
         $:
-          $$invalidate(3, clildZIndex = config.zindex + 10);
+          $$invalidate(5, clildZIndex = config.zindex + 10);
       }
       if ($$self.$$.dirty & 256) {
         $:
@@ -643,21 +675,21 @@
       }
       if ($$self.$$.dirty & 1) {
         $:
-          $$invalidate(5, contentWrapperId = `${id}-content-wrapper`);
+          $$invalidate(3, contentWrapperId = `${id}-content-wrapper`);
       }
       if ($$self.$$.dirty & 256) {
         $:
-          $$invalidate(6, isLoading = config.isLoading);
+          $$invalidate(2, isLoading = config.isLoading);
       }
     };
     return [
       id,
       content,
-      continerZIndex,
-      clildZIndex,
-      backgroundColor,
-      contentWrapperId,
       isLoading,
+      contentWrapperId,
+      backgroundColor,
+      clildZIndex,
+      continerZIndex,
       handleModalContainerOnClick,
       config
     ];
@@ -665,9 +697,7 @@
   var Modal_container = class extends SvelteComponent {
     constructor(options) {
       super();
-      if (!document.getElementById("svelte-fr23s2-style"))
-        add_css2();
-      init(this, options, instance, create_fragment2, safe_not_equal, {id: 0, content: 1, config: 8});
+      init(this, options, instance, create_fragment2, safe_not_equal, {id: 0, content: 1, config: 8}, add_css2);
     }
   };
   var modal_container_default = Modal_container;

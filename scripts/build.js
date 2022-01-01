@@ -20,7 +20,7 @@ build({
   sourcemap: true,
   plugins: [
     sveltePlugin({
-      compileOptions: { css: true },
+      compilerOptions: { css: true },
     }),
   ],
   loader: {
