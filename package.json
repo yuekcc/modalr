@@ -1,12 +1,6 @@
 {
   "name": "modalr",
-  "description": "一个模态层",
   "version": "1.0.0",
-  "license": "MIT",
-  "author": {
-    "name": "yuekcc",
-    "email": "yuekcc@qq.com"
-  },
   "main": "dist/modalr.js",
   "module": "dist/modalr.esm.js",
   "types": "types/index.d.ts",
@@ -18,33 +12,63 @@
     "watch": "node scripts/build.js --watch -format=iife -input=src/iife-wrapper.js -outfile=dist/modalr.js",
     "dev-server": "sirv --dev --port=1234"
   },
+  "author": "lefeng zhan",
+  "license": "MIT",
+  "prettier": {
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "arrowParens": "avoid",
+    "endOfLine": "auto"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es2020": true,
+      "jest": true,
+      "mocha": true,
+      "node": true
+    },
+    "parserOptions": {
+      "sourceType": "module"
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint",
+      "svelte3",
+      "prettier"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:prettier/recommended"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "*.svelte"
+        ],
+        "processor": "svelte3/svelte3"
+      }
+    ]
+  },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
     "esbuild": "~0.14.0",
     "esbuild-svelte": "~0.6.0",
-    "eslint": "^7.28.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-svelte3": "^3.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-svelte3": "^3.4.1",
     "estrella": "^1.4.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "^2.4.0",
     "sirv-cli": "^1.0.12",
-    "svelte": "^3.38.2",
-    "typescript": "^4.3.4"
-  },
-  "keywords": [
-    "svelte",
-    "component",
-    "modal",
-    "dialog"
-  ],
-  "repository": "https://gitee.com/yuekcc/modalr",
-  "files": [
-    "dist",
-    "src",
-    "scripts",
-    "types",
-    "LICENSE",
-    "README.md"
-  ]
+    "svelte": "^3.46.4",
+    "typescript": "^4.5.5"
+  }
 }

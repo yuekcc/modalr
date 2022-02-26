@@ -99,14 +99,18 @@ function children(element2) {
   return Array.from(element2.childNodes);
 }
 function set_style(node, key, value, important) {
-  node.style.setProperty(key, value, important ? "important" : "");
+  if (value === null) {
+    node.style.removeProperty(key);
+  } else {
+    node.style.setProperty(key, value, important ? "important" : "");
+  }
 }
 function custom_event(type, detail, bubbles = false) {
   const e = document.createEvent("CustomEvent");
   e.initCustomEvent(type, bubbles, false, detail);
   return e;
 }
-var active_docs = new Set();
+var managed_styles = new Map();
 var current_component;
 function set_current_component(component) {
   current_component = component;
